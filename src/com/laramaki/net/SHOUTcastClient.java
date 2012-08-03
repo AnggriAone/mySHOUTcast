@@ -24,7 +24,7 @@ import android.util.Log;
 
 public class SHOUTcastClient {
 
-	private static final String API_KEY = "sh1DbdgsPZ96rjV2";
+	private static final String API_KEY = "xxxxx";
 
 	public static void getTopRadioStations() {
 		final String URL = "http://api.shoutcast.com/legacy/Top500?k=" + API_KEY
