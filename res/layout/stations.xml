@@ -10,25 +10,31 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0.4"
             android:text="STATION" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0.1"
             android:text="LISTENERS" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0.1"
             android:text="BITRATE" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:text="GENRE" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0.1"
             android:text="TYPE" />
     </LinearLayout>
@@ -36,6 +42,6 @@
     <ListView
         android:id="@+stations/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
