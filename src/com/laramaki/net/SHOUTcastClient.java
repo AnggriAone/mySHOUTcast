@@ -33,7 +33,7 @@ import com.laramaki.model.Station;
 
 public class SHOUTcastClient {
 
-	private static final String API_KEY = "sh1DbdgsPZ96rjV2";
+	private static final String API_KEY = "xxxxx";
 
 	public static void getTopRadioStations() {
 		final String URL = "http://api.shoutcast.com/legacy/Top500?k="
