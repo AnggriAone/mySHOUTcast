@@ -21,8 +21,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.orman.mapper.Model;
 import org.orman.mapper.ModelQuery;
+import org.orman.sql.Query;
 import org.orman.sql.QueryType;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -33,40 +35,45 @@ import com.laramaki.model.Station;
 
 public class SHOUTcastClient {
 
-	private static final String API_KEY = "xxxxx";
+	private static final String API_KEY = "sh1DbdgsPZ96rjV2";
 
 	public static void getTopRadioStations() {
 		final String URL = "http://api.shoutcast.com/legacy/Top500?k="
-				+ API_KEY + "&limit=20";
+				+ API_KEY + "&limit=5";
 
 		String xml = getXmlFromUrl(URL);
 		Document document = getDomElement(xml);
 
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		try {
-			XPathExpression expr = xpath.compile("//station");
+			XPathExpression expr = xpath.compile("//tunein/@base");
+			String tunein = (String) expr.evaluate(document,
+					XPathConstants.STRING);
+			System.out.println("tunein = " + tunein);
+			expr = xpath.compile("//station");
 			NodeList nl = (NodeList) expr.evaluate(document,
 					XPathConstants.NODESET);
 			Model.execute(ModelQuery.delete().from(Station.class).getQuery());
 			for (int i = 0; i < nl.getLength(); i++) {
-						String name = nl.item(i).getAttributes()
-								.getNamedItem("name").getNodeValue();
-						String mt = nl.item(i).getAttributes()
-								.getNamedItem("mt").getNodeValue();
-						String genre = nl.item(i).getAttributes()
-								.getNamedItem("genre").getNodeValue();
-						String currentTrack = nl.item(i).getAttributes()
-								.getNamedItem("ct").getNodeValue();
-						String bitrate = nl.item(i).getAttributes()
-								.getNamedItem("br").getNodeValue();
-						Station station = new Station();
-						station.name = name.replace(" - a SHOUTcast.com member station", "");
-						station.bitrate = Integer.valueOf(bitrate);
-						station.playingSong = currentTrack.trim();
-						station.genre = genre.trim();
-						station.type = mt.trim();
-						station.insert();
-						System.out.println("Salvando " + i);
+				NamedNodeMap attributes = nl.item(i).getAttributes();
+				String id = attributes.getNamedItem("id").getNodeValue();
+				String name = attributes.getNamedItem("name").getNodeValue();
+				String mt = attributes.getNamedItem("mt").getNodeValue();
+				String genre = attributes.getNamedItem("genre").getNodeValue();
+				String currentTrack = attributes.getNamedItem("ct")
+						.getNodeValue();
+				String bitrate = attributes.getNamedItem("br").getNodeValue();
+				Station station = new Station();
+				station.stationId = Integer.valueOf(id);
+				station.name = name.replace(
+						" - a SHOUTcast.com member station", "");
+				station.bitrate = Integer.valueOf(bitrate);
+				station.playingSong = currentTrack.trim();
+				station.genre = genre.trim();
+				station.type = mt.trim();
+				station.tunein = tunein;
+				station.insert();
+				System.out.println("Salvando " + i);
 			}
 			System.out.println("Tudo salvo");
 			System.out.println(Station.fetchAll(Station.class).size());
@@ -75,7 +82,7 @@ public class SHOUTcastClient {
 		}
 
 	}
-
+	
 	public static String getXmlFromUrl(String url) {
 		String xml = null;
 
@@ -86,7 +93,7 @@ public class SHOUTcastClient {
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			xml = EntityUtils.toString(httpEntity);
-
+			
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {

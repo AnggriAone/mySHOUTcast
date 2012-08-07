@@ -56,7 +56,7 @@ public class StationAdapter extends BaseAdapter {
 		
 		Station station = listOfStations.get(position);
 		
-		holder.name.setText(station.name);
+		holder.name.setText(station.name.trim());
 		holder.genre.setText(station.genre);
 //		holder.type.setText(station.type);
 //		holder.bitrate.setText(station.bitrate + "");
