@@ -1,33 +1,34 @@
 package com.laramaki.fragments;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-
+import javazoom.jl.decoder.Bitstream;
+import javazoom.jl.decoder.BitstreamException;
+import javazoom.jl.decoder.Decoder;
+import javazoom.jl.decoder.DecoderException;
+import javazoom.jl.decoder.Header;
+import javazoom.jl.decoder.SampleBuffer;
+import android.media.AudioFormat;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.media.AudioTrack;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,54 +81,96 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			URI uri;
 			Socket socket = null;
 			try {
-				socket = new Socket("50.7.241.123", 80);
-				System.out.println("OK");
+				socket = new Socket("216.172.153.242", 80);
 				uri = new URI(urls.get(0));
-				System.out.println("OK1");
 
 				socket.setKeepAlive(true);
 				BufferedReader r = new BufferedReader(new InputStreamReader(
 						socket.getInputStream()));
 				PrintWriter w = new PrintWriter(socket.getOutputStream(), true);
-				System.out.println("OK22");
 
-				w.println("GET / HTTP 1.1\r\n");
+				w.println("GET / \r\n");
 				w.flush();
-				System.out.println("OK23");
 				int c;
-				MediaPlayer player = new MediaPlayer();
 				File root = Environment.getExternalStorageDirectory();
-				FileOutputStream fos = new FileOutputStream(root + "/" + "file_stream");
-				player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-				System.out.println("Teste");
-				while ((c = r.read()) != -1) {
-					System.out.print((char) c);
-					fos.write(c);
-					player.setDataSource(fos.getFD());
-					player.prepareAsync();
-				}
+				File f = new File(
+						"/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3");
+				final AudioTrack track = new AudioTrack(
+						AudioManager.STREAM_MUSIC, 44100,
+						AudioFormat.CHANNEL_OUT_STEREO,
+						AudioFormat.ENCODING_PCM_16BIT, 20000,
+						AudioTrack.MODE_STREAM);
+				track.play();
+				int cnt;
+				int i = 0;
+				FileInputStream fis = new FileInputStream(f);
+				byte[] buffer = new byte[200];
+				// while ((cnt = socket.getInputStream().read(buffer)) != -1) {
+				// fos.write(buffer);
+				// if (i == 0) {
+				// i++;
+				// continue;
+				// }
+				// while ((cnt = fis.read(buffer, 0, 1024)) > -1) {
+				int startMs = 0;
+				buffer = decode(
+						"/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3",
+						startMs, 10000);
+				while (buffer != null) {
+					final byte[] b = buffer;
 
+					Thread t = new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							track.write(b, 0, b.length);
+						}
+					});
+					t.start();
+
+					startMs += 10000;
+					buffer = decode(
+							"/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3",
+							startMs, 10000);
+					int leadingZeros = 0;
+					int j = 0;
+					byte[] buff = null;
+					for (byte byt : buffer) {
+						if (byt == 0 && buff == null) {
+							leadingZeros++;
+						} else {
+							buff = new byte[buffer.length - leadingZeros];
+						}
+						if (byt != 0) {
+							buff[j] = byt;
+							j++;
+						}
+					}
+					t.join();
+				}
+				fis.close();
 				socket.close();
 				// HttpClient client = new DefaultHttpClient();
-				// HttpPost request = new HttpPost();
+				// HttpGet request = new HttpGet();
 				// request.addHeader("User-Agent", "UserAgent: Mozilla/5.0");
-				// request.setURI(new URI("http://50.7.241.123"));
+				// request.addHeader("Icy-MetaData", "1");
+				// request.setURI(new URI("http://68.68.105.146"));
 				// System.out.println("OK2");
-				// HttpResponse response = client.execute(new
-				// HttpHost("50.7.241.123", 80), request);
+				// HttpResponse response = client.execute(new HttpHost(
+				// "68.68.105.146", 80), request);
 				// System.out.println("OK3");
 				// InputStream in = response.getEntity().getContent();
-				// BufferedReader reader = new BufferedReader(new
-				// InputStreamReader(in));
+				// BufferedReader reader = new BufferedReader(
+				// new InputStreamReader(in));
 				// StringBuilder str = new StringBuilder();
 				// String line = null;
 				// System.out.println("OK4");
-				// while((line = reader.readLine()) != null){
+				// while ((line = reader.readLine()) != null) {
 				// str.append(line + "\n");
 				// }
 				// in.close();
-				// System.out.println("Response status line: " +
-				// response.getStatusLine());
+				// System.out.println("Response status line: "
+				// + response.getStatusLine());
 				// System.out.println(str.toString());
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -136,5 +179,62 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			return null;
 		}
 
+	}
+
+	public static byte[] decode(String path, int startMs, int maxMs)
+			throws IOException {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream(1024);
+
+		float totalMs = 0;
+		boolean seeking = true;
+
+		File file = new File(path);
+		InputStream inputStream = new BufferedInputStream(new FileInputStream(
+				file), 8 * 1024);
+		try {
+			Bitstream bitstream = new Bitstream(inputStream);
+			Decoder decoder = new Decoder();
+
+			boolean done = false;
+			while (!done) {
+				Header frameHeader = bitstream.readFrame();
+				if (frameHeader == null) {
+					done = true;
+				} else {
+					totalMs += frameHeader.ms_per_frame();
+
+					if (totalMs >= startMs) {
+						seeking = false;
+					}
+
+					if (!seeking) {
+						SampleBuffer output = (SampleBuffer) decoder
+								.decodeFrame(frameHeader, bitstream);
+
+						if (output.getSampleFrequency() != 44100
+								|| output.getChannelCount() != 2) {
+						}
+
+						short[] pcm = output.getBuffer();
+						for (short s : pcm) {
+							outStream.write(s & 0xff);
+							outStream.write((s >> 8) & 0xff);
+						}
+					}
+
+					if (totalMs >= (startMs + maxMs)) {
+						done = true;
+					}
+				}
+				bitstream.closeFrame();
+			}
+
+			return outStream.toByteArray();
+		} catch (BitstreamException e) {
+			throw new IOException("Bitstream error: " + e);
+		} catch (DecoderException e) {
+		} finally {
+		}
+		return null;
 	}
 }
