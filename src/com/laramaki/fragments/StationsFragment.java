@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -77,11 +78,11 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			System.err.println(URL_PLAYER + tunein + "?id=" + id);
 			PlsParser parser = new PlsParser(URL_PLAYER + tunein + "?id=" + id);
 			List<String> urls = parser.getUrls();
-			System.out.println(urls.get(0));
+			System.out.println(urls.get(1));
 			URI uri;
 			Socket socket = null;
 			try {
-				socket = new Socket("216.172.153.242", 80);
+				socket = new Socket("68.68.105.149", 80);
 				uri = new URI(urls.get(0));
 
 				socket.setKeepAlive(true);
@@ -93,8 +94,9 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 				w.flush();
 				int c;
 				File root = Environment.getExternalStorageDirectory();
-				File f = new File(
-						"/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3");
+				File f = new File("/mnt/sdcard/file_stream.wav");
+				f.createNewFile();
+				System.out.println("ok");
 				final AudioTrack track = new AudioTrack(
 						AudioManager.STREAM_MUSIC, 44100,
 						AudioFormat.CHANNEL_OUT_STEREO,
@@ -104,50 +106,50 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 				int cnt;
 				int i = 0;
 				FileInputStream fis = new FileInputStream(f);
-				byte[] buffer = new byte[200];
-				// while ((cnt = socket.getInputStream().read(buffer)) != -1) {
-				// fos.write(buffer);
+				byte[] buffer = new byte[2000];
+				FileOutputStream fos = new FileOutputStream(f);
+				while ((cnt = socket.getInputStream().read(buffer)) != -1) {
+					i++;
+					if (i <= 170) continue;
+//					fos.write(buffer);
+					if (i == 400) break;
+//					int h = 0;
+//					for (byte b : buffer) {
+//						System.out.println(h + " " + (char)b);
+//						h++;
+//					}
+				}
+				fos.close();
+				buffer = decode("/mnt/sdcard/file_stream.wav", 0, 10000);
+				System.out.println("Decoded");
+				track.write(buffer, 0, buffer.length);
+				System.out.println("Played");
 				// if (i == 0) {
 				// i++;
 				// continue;
-				// }
 				// while ((cnt = fis.read(buffer, 0, 1024)) > -1) {
-				int startMs = 0;
-				buffer = decode(
-						"/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3",
-						startMs, 10000);
-				while (buffer != null) {
-					final byte[] b = buffer;
-
-					Thread t = new Thread(new Runnable() {
-
-						@Override
-						public void run() {
-							track.write(b, 0, b.length);
-						}
-					});
-					t.start();
-
-					startMs += 10000;
-					buffer = decode(
-							"/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3",
-							startMs, 10000);
-					int leadingZeros = 0;
-					int j = 0;
-					byte[] buff = null;
-					for (byte byt : buffer) {
-						if (byt == 0 && buff == null) {
-							leadingZeros++;
-						} else {
-							buff = new byte[buffer.length - leadingZeros];
-						}
-						if (byt != 0) {
-							buff[j] = byt;
-							j++;
-						}
-					}
-					t.join();
-				}
+				// int startMs = 0;
+				// buffer = decode(
+				// "/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3",
+				// startMs, 10000);
+				// while (buffer != null) {
+				// final byte[] b = buffer;
+				//
+				// Thread t = new Thread(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// track.write(b, 0, b.length);
+				// }
+				// });
+				// t.start();
+				//
+				// startMs += 10000;
+				// buffer = decode(
+				// "/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3",
+				// startMs, 5000);
+				// t.join();
+				// }
 				fis.close();
 				socket.close();
 				// HttpClient client = new DefaultHttpClient();
