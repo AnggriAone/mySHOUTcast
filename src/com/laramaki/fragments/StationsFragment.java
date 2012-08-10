@@ -1,18 +1,11 @@
 package com.laramaki.fragments;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
 import javazoom.jl.decoder.Bitstream;
@@ -21,24 +14,18 @@ import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.DecoderException;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.SampleBuffer;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.MediaController;
+import android.widget.ProgressBar;
 
 import com.laramaki.R;
 import com.laramaki.adapters.StationAdapter;
@@ -50,6 +37,8 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 	private static final String URL_PLAYER = "http://yp.shoutcast.com";
 	private ListView stationsList;
 	private StationAdapter adapter;
+	private ProgressBar progressBar;
+	private MediaPlayer player;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,6 +50,7 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 		adapter = new StationAdapter(listOfStations, getActivity());
 		stationsList.setAdapter(adapter);
 		stationsList.setOnItemClickListener(this);
+		player = new MediaPlayer();
 		return view;
 	}
 
@@ -69,6 +59,9 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			long id) {
 		Station station = (Station) adapter.getItem(position);
 		new Player().execute(station);
+		progressBar = (ProgressBar) view
+				.findViewById(R.station_list_item.pbLoading);
+		progressBar.setVisibility(View.VISIBLE);
 	}
 
 	class Player extends AsyncTask<Station, Integer, Void> {
@@ -83,14 +76,16 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			List<String> urls = parser.getUrls();
 			System.out.println(urls.get(1));
 			try {
-				final MediaPlayer player = new MediaPlayer();
 				player.setDataSource(getActivity(), Uri.parse(urls.get(0)));
 				player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-					
+
 					@Override
 					public void onPrepared(MediaPlayer mp) {
+						if (player.isPlaying()) {
+							player.stop();
+						}
 						player.start();
-						System.out.println("ok");
+						publishProgress(0);
 					}
 				});
 				player.prepareAsync();
@@ -99,6 +94,11 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			}
 
 			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			progressBar.setVisibility(View.GONE);
 		}
 
 	}

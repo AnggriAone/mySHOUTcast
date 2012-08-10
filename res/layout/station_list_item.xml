@@ -1,47 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:ignore="HardcodedText" >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingBottom="5px"
+    android:paddingLeft="5px"
+    android:paddingTop="5px" >
 
-    <TextView
+    <TextView 
         android:id="@+station_list_item/name"
         style="@android:style/TextAppearance.Medium"
-        android:textStyle="bold"
-        android:textColor="#399bc9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Radio Blah" />
+        android:text="Radio blah"
+        android:textColor="#399bc9"
+        android:textStyle="bold" />
 
-    <TextView
+    <ProgressBar android:layout_toRightOf="@+station_list_item/name"
+        android:id="@+station_list_item/pbLoading"
+        style="@android:style/Widget.ProgressBar.Small.Inverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <TextView android:layout_toRightOf="@+station_list_item/pbLoading"
         android:id="@+station_list_item/listeners"
         style="@android:style/TextAppearance.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#FF0000"
+        android:text="22"
         android:textColor="#777777" />
 
-    <TextView
+    <TextView android:layout_toRightOf="@+station_list_item/listeners"
         android:id="@+station_list_item/bitrate"
         style="@android:style/TextAppearance.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#000000"
+        android:text="128"
         android:textColor="#111111" />
 
-    <TextView
+    <TextView android:layout_toRightOf="@+station_list_item/bitrate"
         android:id="@+station_list_item/type"
         style="@android:style/TextAppearance.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#000000"
+        android:text="mp3"
         android:textColor="#FF0000" />
 
-    <TextView
+    <TextView android:layout_toRightOf="@+station_list_item/type"
         android:id="@+station_list_item/genre"
         style="@android:style/TextAppearance.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
         android:textColor="#0000FF" />
 
-</LinearLayout>
+</RelativeLayout>
