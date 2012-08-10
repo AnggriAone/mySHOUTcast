@@ -24,6 +24,8 @@ import javazoom.jl.decoder.SampleBuffer;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.MediaController;
 
 import com.laramaki.R;
 import com.laramaki.adapters.StationAdapter;
@@ -79,101 +82,18 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			PlsParser parser = new PlsParser(URL_PLAYER + tunein + "?id=" + id);
 			List<String> urls = parser.getUrls();
 			System.out.println(urls.get(1));
-			URI uri;
-			Socket socket = null;
 			try {
-				socket = new Socket("68.68.105.149", 80);
-				uri = new URI(urls.get(0));
-
-				socket.setKeepAlive(true);
-				BufferedReader r = new BufferedReader(new InputStreamReader(
-						socket.getInputStream()));
-				PrintWriter w = new PrintWriter(socket.getOutputStream(), true);
-
-				w.println("GET / \r\n");
-				w.flush();
-				int c;
-				File root = Environment.getExternalStorageDirectory();
-				File f = new File("/mnt/sdcard/file_stream.wav");
-				f.createNewFile();
-				System.out.println("ok");
-				final AudioTrack track = new AudioTrack(
-						AudioManager.STREAM_MUSIC, 44100,
-						AudioFormat.CHANNEL_OUT_STEREO,
-						AudioFormat.ENCODING_PCM_16BIT, 20000,
-						AudioTrack.MODE_STREAM);
-				track.play();
-				int cnt;
-				int i = 0;
-				FileInputStream fis = new FileInputStream(f);
-				byte[] buffer = new byte[2000];
-				FileOutputStream fos = new FileOutputStream(f);
-				while ((cnt = socket.getInputStream().read(buffer)) != -1) {
-					i++;
-					if (i <= 170) continue;
-//					fos.write(buffer);
-					if (i == 400) break;
-//					int h = 0;
-//					for (byte b : buffer) {
-//						System.out.println(h + " " + (char)b);
-//						h++;
-//					}
-				}
-				fos.close();
-				buffer = decode("/mnt/sdcard/file_stream.wav", 0, 10000);
-				System.out.println("Decoded");
-				track.write(buffer, 0, buffer.length);
-				System.out.println("Played");
-				// if (i == 0) {
-				// i++;
-				// continue;
-				// while ((cnt = fis.read(buffer, 0, 1024)) > -1) {
-				// int startMs = 0;
-				// buffer = decode(
-				// "/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3",
-				// startMs, 10000);
-				// while (buffer != null) {
-				// final byte[] b = buffer;
-				//
-				// Thread t = new Thread(new Runnable() {
-				//
-				// @Override
-				// public void run() {
-				// track.write(b, 0, b.length);
-				// }
-				// });
-				// t.start();
-				//
-				// startMs += 10000;
-				// buffer = decode(
-				// "/mnt/sdcard/Music/Gavin Rossdale - Adrenaline.mp3",
-				// startMs, 5000);
-				// t.join();
-				// }
-				fis.close();
-				socket.close();
-				// HttpClient client = new DefaultHttpClient();
-				// HttpGet request = new HttpGet();
-				// request.addHeader("User-Agent", "UserAgent: Mozilla/5.0");
-				// request.addHeader("Icy-MetaData", "1");
-				// request.setURI(new URI("http://68.68.105.146"));
-				// System.out.println("OK2");
-				// HttpResponse response = client.execute(new HttpHost(
-				// "68.68.105.146", 80), request);
-				// System.out.println("OK3");
-				// InputStream in = response.getEntity().getContent();
-				// BufferedReader reader = new BufferedReader(
-				// new InputStreamReader(in));
-				// StringBuilder str = new StringBuilder();
-				// String line = null;
-				// System.out.println("OK4");
-				// while ((line = reader.readLine()) != null) {
-				// str.append(line + "\n");
-				// }
-				// in.close();
-				// System.out.println("Response status line: "
-				// + response.getStatusLine());
-				// System.out.println(str.toString());
+				final MediaPlayer player = new MediaPlayer();
+				player.setDataSource(getActivity(), Uri.parse(urls.get(0)));
+				player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+					
+					@Override
+					public void onPrepared(MediaPlayer mp) {
+						player.start();
+						System.out.println("ok");
+					}
+				});
+				player.prepareAsync();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
