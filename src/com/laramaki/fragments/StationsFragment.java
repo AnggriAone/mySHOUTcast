@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ViewFlipper;
 
 import com.laramaki.R;
 import com.laramaki.adapters.StationAdapter;
@@ -38,6 +39,7 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 	private ListView stationsList;
 	private StationAdapter adapter;
 	private ProgressBar progressBar;
+	private ViewFlipper flipper;
 	private MediaPlayer player;
 	private Station currentStation;
 
@@ -65,6 +67,8 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			}
 			currentStation = null;
 		} else {
+			flipper = (ViewFlipper) view.findViewById(R.station_list_item.viewFlipper);
+			flipper.setDisplayedChild(1);
 			currentStation = station;
 			new Player().execute(station);
 			progressBar = (ProgressBar) view
@@ -83,7 +87,7 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			System.err.println(URL_PLAYER + tunein + "?id=" + id);
 			PlsParser parser = new PlsParser(URL_PLAYER + tunein + "?id=" + id);
 			List<String> urls = parser.getUrls();
-			System.out.println(urls.get(1));
+			System.out.println(urls.get(0));
 			try {
 				player.reset();
 				player.setDataSource(getActivity(), Uri.parse(urls.get(0)));
@@ -92,7 +96,13 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 					@Override
 					public void onPrepared(MediaPlayer mp) {
 						player.start();
-						publishProgress(0);
+					}
+				});
+				player.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+					
+					@Override
+					public void onBufferingUpdate(MediaPlayer mp, int percent) {
+						flipper.setDisplayedChild(0);
 					}
 				});
 				player.prepareAsync();
@@ -102,12 +112,7 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 
 			return null;
 		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			progressBar.setVisibility(View.GONE);
-		}
-
+		
 	}
 
 	public static byte[] decode(String path, int startMs, int maxMs)

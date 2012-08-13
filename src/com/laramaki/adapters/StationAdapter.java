@@ -2,15 +2,16 @@ package com.laramaki.adapters;
 
 import java.util.List;
 
-import com.laramaki.R;
-import com.laramaki.model.Station;
-
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.laramaki.R;
+import com.laramaki.model.Station;
 
 public class StationAdapter extends BaseAdapter {
 
@@ -21,10 +22,11 @@ public class StationAdapter extends BaseAdapter {
 		this.listOfStations = listOfStations;
 		this.context = context;
 	}
-	
+
 	@Override
 	public int getCount() {
-		if (listOfStations == null) return 0;
+		if (listOfStations == null)
+			return 0;
 		return listOfStations.size();
 	}
 
@@ -42,35 +44,34 @@ public class StationAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
 		if (convertView == null) {
-			convertView = LayoutInflater.from(context).inflate(R.layout.station_list_item, null);
+			convertView = LayoutInflater.from(context).inflate(
+					R.layout.station_list_item, null);
 			holder = new ViewHolder();
-//			holder.bitrate = (TextView) convertView.findViewById(R.station_list_item.bitrate);
-			holder.name = (TextView) convertView.findViewById(R.station_list_item.name);
-//			holder.listeneres = (TextView) convertView.findViewById(R.station_list_item.listeners);
-//			holder.type = (TextView) convertView.findViewById(R.station_list_item.type);
-			holder.genre = (TextView) convertView.findViewById(R.station_list_item.genre);
+			holder.name = (TextView) convertView
+					.findViewById(R.station_list_item.name);
+			holder.genre = (TextView) convertView
+					.findViewById(R.station_list_item.genre);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		
+
 		Station station = listOfStations.get(position);
-		
+
 		holder.name.setText(station.name.trim());
 		holder.genre.setText(station.genre);
-//		holder.type.setText(station.type);
-//		holder.bitrate.setText(station.bitrate + "");
-//		holder.listeneres.setText(station.numberOfListeners + "");
-		
+		if (TextUtils.isEmpty(station.genre)) {
+			holder.genre.setVisibility(View.GONE);
+		} else {
+			holder.genre.setVisibility(View.VISIBLE);
+		}
+
 		return convertView;
 	}
-	
+
 	static class ViewHolder {
 		TextView name;
 		TextView genre;
-		TextView bitrate;
-		TextView type;
-		TextView listeneres;
 	}
 
 }

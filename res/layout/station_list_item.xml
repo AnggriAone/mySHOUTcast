@@ -7,55 +7,53 @@
     android:paddingLeft="5px"
     android:paddingTop="5px" >
 
-    <TextView 
+    <ViewFlipper
+        android:id="@+station_list_item/viewFlipper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+station_list_item/ivRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/radio1" />
+
+        <ProgressBar
+            android:id="@+station_list_item/pbLoading"
+            style="@android:style/Widget.ProgressBar.Small.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </ViewFlipper>
+
+    <TextView
         android:id="@+station_list_item/name"
         style="@android:style/TextAppearance.Medium"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Radio blahdsdsdsdsdsdsdsdsdsds"
+        android:layout_toRightOf="@station_list_item/viewFlipper"
         android:background="#0000FF"
+        android:ellipsize="marquee"
+        android:lines="1"
+        android:text="Radio blahdsdsdsdsdsdsdsdsdsds"
         android:textColor="#399bc9"
         android:textStyle="bold" />
 
-    <ProgressBar android:layout_toRightOf="@station_list_item/name"
-        android:id="@+station_list_item/pbLoading"
-        style="@android:style/Widget.ProgressBar.Small.Inverse"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:layout_below="@station_list_item/name"
+        android:layout_toRightOf="@station_list_item/viewFlipper"
+        android:orientation="vertical" >
 
-    <TextView android:layout_toRightOf="@+station_list_item/pbLoading"
-        android:id="@+station_list_item/listeners"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#FF0000"
-        android:text="22"
-        android:textColor="#777777" />
-
-    <TextView android:layout_toRightOf="@+station_list_item/listeners"
-        android:id="@+station_list_item/bitrate"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#000000"
-        android:text="128"
-        android:textColor="#111111" />
-
-    <TextView android:layout_toRightOf="@+station_list_item/bitrate"
-        android:id="@+station_list_item/type"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#000000"
-        android:text="mp3"
-        android:textColor="#FF0000" />
-
-    <TextView android:layout_toRightOf="@+station_list_item/type"
-        android:id="@+station_list_item/genre"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#0000FF" />
+        <TextView
+            android:id="@+station_list_item/genre"
+            style="@android:style/TextAppearance.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#999999"
+            android:text="ROCKEIRAO"
+            android:textColor="#0000FF" />
+    </LinearLayout>
 
 </RelativeLayout>

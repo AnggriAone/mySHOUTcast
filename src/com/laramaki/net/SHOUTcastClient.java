@@ -41,6 +41,8 @@ public class SHOUTcastClient {
 		final String URL = "http://api.shoutcast.com/legacy/Top500?k="
 				+ API_KEY + "&limit=2";
 
+		System.out.println("http://api.shoutcast.com/legacy/Top500?k="
+				+ API_KEY + "&limit=2");
 		String xml = getXmlFromUrl(URL);
 		Document document = getDomElement(xml);
 
@@ -82,7 +84,7 @@ public class SHOUTcastClient {
 		}
 
 	}
-	
+
 	public static String getXmlFromUrl(String url) {
 		String xml = null;
 
@@ -93,7 +95,7 @@ public class SHOUTcastClient {
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			HttpEntity httpEntity = httpResponse.getEntity();
 			xml = EntityUtils.toString(httpEntity);
-			
+
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
