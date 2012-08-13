@@ -39,6 +39,7 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 	private StationAdapter adapter;
 	private ProgressBar progressBar;
 	private MediaPlayer player;
+	private Station currentStation;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,10 +59,18 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		Station station = (Station) adapter.getItem(position);
-		new Player().execute(station);
-		progressBar = (ProgressBar) view
-				.findViewById(R.station_list_item.pbLoading);
-		progressBar.setVisibility(View.VISIBLE);
+		if (station.equals(currentStation)) {
+			if (player.isPlaying()) {
+				player.stop();
+			}
+			currentStation = null;
+		} else {
+			currentStation = station;
+			new Player().execute(station);
+			progressBar = (ProgressBar) view
+					.findViewById(R.station_list_item.pbLoading);
+			progressBar.setVisibility(View.VISIBLE);
+		}
 	}
 
 	class Player extends AsyncTask<Station, Integer, Void> {
@@ -76,14 +85,12 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			List<String> urls = parser.getUrls();
 			System.out.println(urls.get(1));
 			try {
+				player.reset();
 				player.setDataSource(getActivity(), Uri.parse(urls.get(0)));
 				player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
 					@Override
 					public void onPrepared(MediaPlayer mp) {
-						if (player.isPlaying()) {
-							player.stop();
-						}
 						player.start();
 						publishProgress(0);
 					}

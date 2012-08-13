@@ -10,13 +10,14 @@
     <TextView 
         android:id="@+station_list_item/name"
         style="@android:style/TextAppearance.Medium"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Radio blah"
+        android:layout_width="wrap_content"
+        android:text="Radio blahdsdsdsdsdsdsdsdsdsds"
+        android:background="#0000FF"
         android:textColor="#399bc9"
         android:textStyle="bold" />
 
-    <ProgressBar android:layout_toRightOf="@+station_list_item/name"
+    <ProgressBar android:layout_toRightOf="@station_list_item/name"
         android:id="@+station_list_item/pbLoading"
         style="@android:style/Widget.ProgressBar.Small.Inverse"
         android:layout_width="wrap_content"

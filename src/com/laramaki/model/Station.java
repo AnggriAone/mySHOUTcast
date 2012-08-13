@@ -16,4 +16,11 @@ public class Station extends Model<Station> {
 	public String type;
 	public String playingSong;
 	public String tunein;
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) return false;
+		if (((Station)o).stationId == this.stationId) return true;
+		return false;
+	}
 }
