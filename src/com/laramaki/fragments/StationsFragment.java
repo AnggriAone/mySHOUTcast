@@ -8,14 +8,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.orman.sql.QueryBuilder;
-
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.DecoderException;
 import javazoom.jl.decoder.Header;
 import javazoom.jl.decoder.SampleBuffer;
+
+import org.orman.sql.QueryBuilder;
+
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -26,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
@@ -44,6 +46,10 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 	private ViewFlipper flipper;
 	private MediaPlayer player;
 	private Station currentStation;
+	
+	public StationsFragment() {
+		player = new MediaPlayer();
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +61,6 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 		adapter = new StationAdapter(listOfStations, getActivity());
 		stationsList.setAdapter(adapter);
 		stationsList.setOnItemClickListener(this);
-		player = new MediaPlayer();
 		return view;
 	}
 
@@ -73,11 +78,13 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			if (flipper != null) {
 				flipper.setDisplayedChild(0);
 			}
-			Station.execute(QueryBuilder.update().set("playing", false).from("station").getQuery());
+			Station.execute(QueryBuilder.update().set("playing", false)
+					.from("station").getQuery());
 			station.playing = true;
 			station.update();
 			adapter.setPlayingStation(station);
-			flipper = (ViewFlipper) view.findViewById(R.station_list_item.viewFlipper);
+			flipper = (ViewFlipper) view
+					.findViewById(R.station_list_item.viewFlipper);
 			flipper.setDisplayedChild(1);
 			currentStation = station;
 			new Player().execute(station);
@@ -87,45 +94,7 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 		}
 	}
 
-	class Player extends AsyncTask<Station, Integer, Void> {
-
-		@Override
-		protected Void doInBackground(Station... params) {
-			Integer id = params[0].stationId;
-			String tunein = params[0].tunein;
-
-			System.err.println(URL_PLAYER + tunein + "?id=" + id);
-			PlsParser parser = new PlsParser(URL_PLAYER + tunein + "?id=" + id);
-			List<String> urls = parser.getUrls();
-			System.out.println(urls.get(0));
-			try {
-				player.reset();
-				player.setDataSource(getActivity(), Uri.parse(urls.get(0)));
-				player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-					@Override
-					public void onPrepared(MediaPlayer mp) {
-						player.start();
-					}
-				});
-				player.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-					
-					@Override
-					public void onBufferingUpdate(MediaPlayer mp, int percent) {
-						flipper.setDisplayedChild(2);
-					}
-				});
-				player.prepareAsync();
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-
-			return null;
-		}
-		
-	}
-
-	public static byte[] decode(String path, int startMs, int maxMs)
+	public byte[] decodeMP3(String path, int startMs, int maxMs)
 			throws IOException {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream(1024);
 
@@ -180,5 +149,43 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 		} finally {
 		}
 		return null;
+	}
+
+	class Player extends AsyncTask<Station, Integer, Void> {
+
+		@Override
+		protected Void doInBackground(Station... params) {
+			Integer id = params[0].stationId;
+			String tunein = params[0].tunein;
+
+			System.err.println(URL_PLAYER + tunein + "?id=" + id);
+			PlsParser parser = new PlsParser(URL_PLAYER + tunein + "?id=" + id);
+			List<String> urls = parser.getUrls();
+			System.out.println(urls.get(0));
+			try {
+				player.reset();
+				player.setDataSource(getActivity(), Uri.parse(urls.get(0)));
+				player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+					@Override
+					public void onPrepared(MediaPlayer mp) {
+						player.start();
+					}
+				});
+				player.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+
+					@Override
+					public void onBufferingUpdate(MediaPlayer mp, int percent) {
+						flipper.setDisplayedChild(2);
+					}
+				});
+				player.prepareAsync();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+
+			return null;
+		}
+
 	}
 }
