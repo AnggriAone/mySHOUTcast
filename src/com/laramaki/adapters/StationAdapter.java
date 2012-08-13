@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.laramaki.R;
 import com.laramaki.model.Station;
@@ -16,6 +17,7 @@ import com.laramaki.model.Station;
 public class StationAdapter extends BaseAdapter {
 
 	private List<Station> listOfStations;
+	private Station playingStation;
 	private Context context;
 
 	public StationAdapter(List<Station> listOfStations, Context context) {
@@ -51,6 +53,7 @@ public class StationAdapter extends BaseAdapter {
 					.findViewById(R.station_list_item.name);
 			holder.genre = (TextView) convertView
 					.findViewById(R.station_list_item.genre);
+			holder.flipper = (ViewFlipper) convertView.findViewById(R.station_list_item.viewFlipper);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -65,13 +68,23 @@ public class StationAdapter extends BaseAdapter {
 		} else {
 			holder.genre.setVisibility(View.VISIBLE);
 		}
+		if (station.equals(this.playingStation)) {
+			holder.flipper.setDisplayedChild(2);
+		} else {
+			holder.flipper.setDisplayedChild(0);
+		}
 
 		return convertView;
+	}
+	
+	public void setPlayingStation(Station playingStation) {
+		this.playingStation = playingStation;
 	}
 
 	static class ViewHolder {
 		TextView name;
 		TextView genre;
+		ViewFlipper flipper;
 	}
 
 }

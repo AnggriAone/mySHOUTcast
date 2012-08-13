@@ -16,6 +16,7 @@ public class Station extends Model<Station> {
 	public String type;
 	public String playingSong;
 	public String tunein;
+	public boolean playing;
 	
 	@Override
 	public boolean equals(Object o) {

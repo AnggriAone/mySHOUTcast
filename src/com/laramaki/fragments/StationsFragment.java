@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.orman.sql.QueryBuilder;
+
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.decoder.Decoder;
@@ -71,6 +73,10 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			if (flipper != null) {
 				flipper.setDisplayedChild(0);
 			}
+			Station.execute(QueryBuilder.update().set("playing", false).from("station").getQuery());
+			station.playing = true;
+			station.update();
+			adapter.setPlayingStation(station);
 			flipper = (ViewFlipper) view.findViewById(R.station_list_item.viewFlipper);
 			flipper.setDisplayedChild(1);
 			currentStation = station;
