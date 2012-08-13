@@ -64,6 +64,7 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 		if (station.equals(currentStation)) {
 			if (player.isPlaying()) {
 				player.stop();
+				flipper.setDisplayedChild(0);
 			}
 			currentStation = null;
 		} else {
@@ -102,7 +103,7 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 					
 					@Override
 					public void onBufferingUpdate(MediaPlayer mp, int percent) {
-						flipper.setDisplayedChild(0);
+						flipper.setDisplayedChild(2);
 					}
 				});
 				player.prepareAsync();

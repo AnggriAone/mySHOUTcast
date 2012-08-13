@@ -24,6 +24,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+        
+        <ImageView
+            android:id="@+station_list_item/ivRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/speaker" />
     </ViewFlipper>
 
     <TextView
