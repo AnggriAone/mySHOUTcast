@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="5px"
     android:paddingLeft="5px"
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
-        
+
         <ImageView
             android:id="@+station_list_item/ivRadio"
             android:layout_width="wrap_content"
@@ -32,34 +32,39 @@
             android:src="@drawable/speaker" />
     </ViewFlipper>
 
-    <TextView
-        android:id="@+station_list_item/name"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@station_list_item/viewFlipper"
-        android:background="#0000FF"
-        android:ellipsize="marquee"
-        android:lines="1"
-        android:text="Radio blahdsdsdsdsdsdsdsdsdsds"
-        android:textColor="#399bc9"
-        android:textStyle="bold" />
-
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+station_list_item/details"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@station_list_item/name"
-        android:layout_toRightOf="@station_list_item/viewFlipper"
-        android:orientation="vertical" >
+        android:layout_toRightOf="@station_list_item/viewFlipper" >
 
         <TextView
-            android:id="@+station_list_item/genre"
+            android:id="@+station_list_item/name"
             style="@android:style/TextAppearance.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#999999"
-            android:text="ROCKEIRAO"
-            android:textColor="#0000FF" />
+            android:ellipsize="marquee"
+            android:lines="1"
+            android:textColor="#399bc9"
+            android:textStyle="bold" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+station_list_item/genre"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+station_list_item/details"
+        android:layout_toRightOf="@station_list_item/viewFlipper"
+        android:textColor="#0000FF" />
+
+    <CheckBox
+        android:id="@+station_list_item/favorite"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+station_list_item/details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@android:drawable/btn_star"
+        android:focusable="false" />
 
 </RelativeLayout>
