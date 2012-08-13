@@ -39,7 +39,7 @@ public class SHOUTcastClient {
 
 	public static void getTopRadioStations() {
 		final String URL = "http://api.shoutcast.com/legacy/Top500?k="
-				+ API_KEY + "&limit=2";
+				+ API_KEY + "&limit=10";
 
 		System.out.println("http://api.shoutcast.com/legacy/Top500?k="
 				+ API_KEY + "&limit=2");

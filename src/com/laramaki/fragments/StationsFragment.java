@@ -68,6 +68,9 @@ public class StationsFragment extends Fragment implements OnItemClickListener {
 			}
 			currentStation = null;
 		} else {
+			if (flipper != null) {
+				flipper.setDisplayedChild(0);
+			}
 			flipper = (ViewFlipper) view.findViewById(R.station_list_item.viewFlipper);
 			flipper.setDisplayedChild(1);
 			currentStation = station;
