@@ -2,4 +2,12 @@
 
     <style name="AppTheme" parent="@android:style/Theme.Light.NoTitleBar" />
 
+    <style name="actionbar_layout">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+    </style>
+
 </resources>

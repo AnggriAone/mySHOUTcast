@@ -57,30 +57,28 @@ public class SHOUTcastClient {
 			expr = xpath.compile("//station");
 			NodeList nl = (NodeList) expr.evaluate(document,
 					XPathConstants.NODESET);
-//			Model.execute(ModelQuery.delete().from(Station.class).getQuery());
+			// Model.execute(ModelQuery.delete().from(Station.class).getQuery());
 			for (int i = 0; i < nl.getLength(); i++) {
 				NamedNodeMap attributes = nl.item(i).getAttributes();
 				String id = attributes.getNamedItem("id").getNodeValue();
 				String name = attributes.getNamedItem("name").getNodeValue();
-				String mt = attributes.getNamedItem("mt").getNodeValue();
 				String genre = attributes.getNamedItem("genre").getNodeValue();
 				String currentTrack = attributes.getNamedItem("ct")
 						.getNodeValue();
-				String bitrate = attributes.getNamedItem("br").getNodeValue();
 				Station station = new Station();
 				station.name = name.replace(
 						" - a SHOUTcast.com member station", "");
-				station.bitrate = Integer.valueOf(bitrate);
 				station.stationId = Integer.valueOf(id);
 				station.playingSong = currentTrack.trim();
 				station.genre = genre.trim();
-				station.type = mt.trim();
 				station.tunein = tunein;
-				Query q = ModelQuery.select().from(Station.class).where(C.eq("station_id", Integer.valueOf(id))).getQuery();
+				Query q = ModelQuery.select().from(Station.class)
+						.where(C.eq("station_id", Integer.valueOf(id)))
+						.getQuery();
 				if (Model.fetchSingle(q, Station.class) == null) {
 					station.insert();
-				} 
-				
+				}
+
 				System.out.println("Salvando " + i);
 			}
 			System.out.println("Tudo salvo");

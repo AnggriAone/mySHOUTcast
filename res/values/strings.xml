@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">shoutcastMe</string>
+    <string name="app_name">SimpleShoutCast</string>
+    <string name="actionBarTop">Top</string>
 </resources>

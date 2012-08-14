@@ -14,9 +14,6 @@ public class Station extends Model<Station> {
 	public int stationId;
 	public String name;
 	public String genre;
-	public int numberOfListeners;
-	public int bitrate;
-	public String type;
 	public String playingSong;
 	public String tunein;
 	public boolean playing;

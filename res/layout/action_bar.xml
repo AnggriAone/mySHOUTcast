@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+    
+    <LinearLayout
+            style="@style/actionbar_layout">
+        <ImageView
+                android:id="@+actionBar/contactImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_actionbar_favorite"/>
+        <TextView
+                android:id="@+actionBar/contactText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/actionBarTop"/>
+
+    </LinearLayout>
+
+</LinearLayout>
