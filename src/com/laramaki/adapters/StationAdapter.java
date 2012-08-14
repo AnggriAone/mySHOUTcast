@@ -3,6 +3,7 @@ package com.laramaki.adapters;
 import java.util.List;
 
 import org.orman.mapper.ModelQuery;
+import org.orman.sql.C;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -70,21 +71,22 @@ public class StationAdapter extends BaseAdapter {
 		Station station = listOfStations.get(position);
 
 		holder.name.setText(station.name.trim());
-		holder.favorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		holder.favorite
+				.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				Station station = (Station) getItem(position);
-				if (isChecked) {
-					addToFavorites(station);
-				} else {
-					removeFromFavorites(station);
-				}
-			}
-			
-		});
-		
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						Station station = (Station) getItem(position);
+						if (isChecked) {
+							addToFavorites(station);
+						} else {
+							removeFromFavorites(station);
+						}
+					}
+
+				});
+
 		if (TextUtils.isEmpty(station.genre)) {
 			holder.genre.setVisibility(View.GONE);
 		} else {
@@ -96,7 +98,7 @@ public class StationAdapter extends BaseAdapter {
 		} else {
 			holder.flipper.setDisplayedChild(0);
 		}
-
+		holder.favorite.setChecked(station.isFavorite());
 		return convertView;
 	}
 
@@ -112,11 +114,22 @@ public class StationAdapter extends BaseAdapter {
 	}
 
 	private void addToFavorites(Station station) {
-		System.out.println(">>" + station.fetchSingle(ModelQuery.select().from(Station.class).getQuery(), Station.class));
-		System.out.println(">>" + Favorite.fetchAll(Favorite.class).size());
+		if (!station.isFavorite()) {
+			Favorite favorite = new Favorite();
+			favorite.station = station;
+			favorite.insert();
+		}
 	}
-	
+
 	private void removeFromFavorites(Station station) {
-		
+		if (station.isFavorite()) {
+			Favorite fav = Favorite.fetchSingle(
+					ModelQuery.select().from(Favorite.class)
+							.where(C.eq("station", station.stationId))
+							.getQuery(), Favorite.class);
+			if (fav != null) {
+				fav.delete();
+			}
+		}
 	}
 }

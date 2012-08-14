@@ -21,6 +21,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.orman.mapper.Model;
 import org.orman.mapper.ModelQuery;
+import org.orman.sql.C;
 import org.orman.sql.Query;
 import org.orman.sql.QueryType;
 import org.w3c.dom.Document;
@@ -31,11 +32,12 @@ import org.xml.sax.SAXException;
 
 import android.util.Log;
 
+import com.laramaki.model.Favorite;
 import com.laramaki.model.Station;
 
 public class SHOUTcastClient {
 
-	private static final String API_KEY = "xxxxxxxxx";
+	private static final String API_KEY = "sh1DbdgsPZ96rjV2";
 
 	public static void getTopRadioStations() {
 		final String URL = "http://api.shoutcast.com/legacy/Top500?k="
@@ -55,7 +57,7 @@ public class SHOUTcastClient {
 			expr = xpath.compile("//station");
 			NodeList nl = (NodeList) expr.evaluate(document,
 					XPathConstants.NODESET);
-			Model.execute(ModelQuery.delete().from(Station.class).getQuery());
+//			Model.execute(ModelQuery.delete().from(Station.class).getQuery());
 			for (int i = 0; i < nl.getLength(); i++) {
 				NamedNodeMap attributes = nl.item(i).getAttributes();
 				String id = attributes.getNamedItem("id").getNodeValue();
@@ -66,15 +68,19 @@ public class SHOUTcastClient {
 						.getNodeValue();
 				String bitrate = attributes.getNamedItem("br").getNodeValue();
 				Station station = new Station();
-				station.stationId = Integer.valueOf(id);
 				station.name = name.replace(
 						" - a SHOUTcast.com member station", "");
 				station.bitrate = Integer.valueOf(bitrate);
+				station.stationId = Integer.valueOf(id);
 				station.playingSong = currentTrack.trim();
 				station.genre = genre.trim();
 				station.type = mt.trim();
 				station.tunein = tunein;
-				station.insert();
+				Query q = ModelQuery.select().from(Station.class).where(C.eq("station_id", Integer.valueOf(id))).getQuery();
+				if (Model.fetchSingle(q, Station.class) == null) {
+					station.insert();
+				} 
+				
 				System.out.println("Salvando " + i);
 			}
 			System.out.println("Tudo salvo");
