@@ -1,5 +1,7 @@
 package com.laramaki.fragments;
 
+import com.laramaki.R;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ public class SplashFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
-		return super.onCreateView(inflater, container, savedInstanceState);
+		return inflater.inflate(R.layout.splash, null);
 	}
+	
 }
